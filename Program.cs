@@ -22,10 +22,14 @@ Venta venta;
 List<Venta> ventaDelDia = new List<Venta>();
 List<VentaProducto> ventaProductosDia = new List<VentaProducto>();
 
+
 JsonSerializerSettings settings = new JsonSerializerSettings
 {
     ReferenceLoopHandling = ReferenceLoopHandling.Ignore
 };
+
+
+
 
 
 DateTime fechaHoraActual = DateTime.Now;
@@ -199,7 +203,7 @@ if (!Directory.Exists(directorio))
 json = JsonConvert.SerializeObject(ventaDelDia.ToList(), Formatting.Indented, settings);
 File.WriteAllText(directorio+"/ventasDia_"+fecha2+".json", json);
 
-json = JsonConvert.SerializeObject(ctx.Ventas.ToList(), Formatting.Indented, settings);
+json = JsonConvert.SerializeObject(ctx.Ventas.ToList(),Formatting.Indented, settings);
 File.WriteAllText(directorio+"/ventasGeneral.json", json);
 
 
@@ -211,11 +215,12 @@ if (!Directory.Exists(directorio))
 }
 
 
-json = JsonConvert.SerializeObject(ventaDelDia.ToList(), Formatting.Indented, settings);
+json = JsonConvert.SerializeObject(ventaDelDia.ToList(),Formatting.Indented, settings);
 File.WriteAllText(directorio+"/ventasProductoDia_"+fecha2+".json", json);
 
 
-json = JsonConvert.SerializeObject(ctx.VentaProductos.ToList(), Formatting.Indented, settings);
+json = JsonConvert.SerializeObject(ctx.VentaProductos.ToList(),Formatting.Indented, settings);
 File.WriteAllText(directorio+"/ventasProductoGeneral.json", json);
+
 
 

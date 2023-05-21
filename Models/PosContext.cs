@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore;
 
 public partial class PosContext : DbContext
 {
-    /**
+    /*
     public PosContext()
     {
     }
