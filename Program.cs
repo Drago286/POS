@@ -28,14 +28,45 @@ JsonSerializerSettings settings = new JsonSerializerSettings
     ReferenceLoopHandling = ReferenceLoopHandling.Ignore
 };
 
-
-
-
+//OBTENER FECHA
 
 DateTime fechaHoraActual = DateTime.Now;
 TimeSpan horaActual = fechaHoraActual.TimeOfDay;
 fecha2 = fechaHoraActual.Day.ToString() + fechaHoraActual.Month.ToString() + fechaHoraActual.Year.ToString();
 
+//ACTUALIZACION DE PRODUCTOS
+
+string jsonFilePath = @"/Users/dragoperic/Desktop/archivosPOS/inventario/inventario.json";
+
+string jsonContent = File.ReadAllText(jsonFilePath);
+
+List<Producto> productosActualizados = JsonConvert.DeserializeObject<List<Producto>>(jsonContent);
+
+foreach (var productoActualizado in productosActualizados)
+{
+        Producto productoExistente = ctx.Productos.FirstOrDefault(p => p.Idproducto == productoActualizado.Idproducto);
+        if (productoExistente != null)
+        {
+            productoExistente.Codigo = productoActualizado.Codigo;
+            productoExistente.Nombre = productoActualizado.Nombre;
+            productoExistente.Descripcion = productoActualizado.Descripcion;
+            productoExistente.Precio = productoActualizado.Precio;
+            /**
+        }else{
+            Producto nuevoProducto = new Producto{
+            Codigo = productoActualizado.Codigo,
+            Nombre = productoActualizado.Nombre,
+            Descripcion = productoActualizado.Descripcion,
+            Precio = productoActualizado.Precio,
+            };
+                ctx.Productos.Add(nuevoProducto);
+                ctx.SaveChanges();
+        }
+        **/
+        }
+}
+
+ctx.SaveChanges();
 
 
 Console.WriteLine("Buenos dias, ingrese el numero de caja: ");
