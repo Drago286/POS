@@ -4,7 +4,7 @@ using System.IO;
 string codigoProducto;
 int codigoProducto2;
 string numeroCaja;
-double correlativo;
+long correlativo;
 string cantidadComprada;
 int cantidadComprada2;
 string rutCliente;
@@ -12,6 +12,8 @@ int idVenta;
 string fecha;
 string fecha2;
 string json;
+string sucursalActual = "Punto encuentro";
+
 
 Venta ventaBuscada;
 Producto productoBuscado;
@@ -36,23 +38,30 @@ fecha2 = fechaHoraActual.Day.ToString() + fechaHoraActual.Month.ToString() + fec
 
 //ACTUALIZACION DE PRODUCTOS
 
-string jsonFilePath = @"/Users/dragoperic/Desktop/archivosPOS/inventario/inventario.json";
+string archivoIntentario = @"/Users/dragoperic/Desktop/archivosPOS/inventario/inventario.json";
 
-string jsonContent = File.ReadAllText(jsonFilePath);
+string inventario = File.ReadAllText(archivoIntentario);
 
-List<Producto> productosActualizados = JsonConvert.DeserializeObject<List<Producto>>(jsonContent);
 
-foreach (var productoActualizado in productosActualizados)
-{
-        Producto productoExistente = ctx.Productos.FirstOrDefault(p => p.Idproducto == productoActualizado.Idproducto);
-        if (productoExistente != null)
+List<ProductoInvenario> productosActualizados = JsonConvert.DeserializeObject<List<ProductoInvenario>>(inventario);
+
+
+foreach (var productoActualizado in productosActualizados){
+    Console.WriteLine("Codigo desde inventerio.json: "+ productoActualizado.Codigo);
+
+
+        Producto productoExistente = ctx.Productos.FirstOrDefault(p => p.Codigo == productoActualizado.Codigo);
+        if ((productoExistente != null) && (sucursalActual == productoActualizado.NombreSucursal))
         {
+            Console.WriteLine("Codigo encontrado: "+  productoExistente.Codigo);
+            Console.WriteLine("producto de la sucursal: "+ productoActualizado.NombreSucursal);
             productoExistente.Codigo = productoActualizado.Codigo;
             productoExistente.Nombre = productoActualizado.Nombre;
             productoExistente.Descripcion = productoActualizado.Descripcion;
             productoExistente.Precio = productoActualizado.Precio;
-            /**
-        }else{
+            
+        }
+        if((productoExistente == null) && (sucursalActual == productoActualizado.NombreSucursal)){
             Producto nuevoProducto = new Producto{
             Codigo = productoActualizado.Codigo,
             Nombre = productoActualizado.Nombre,
@@ -62,8 +71,8 @@ foreach (var productoActualizado in productosActualizados)
                 ctx.Productos.Add(nuevoProducto);
                 ctx.SaveChanges();
         }
-        **/
-        }
+        
+        
 }
 
 ctx.SaveChanges();
@@ -86,7 +95,7 @@ fechaHoraActual = DateTime.Now;
 horaActual = fechaHoraActual.TimeOfDay;
 fecha = fechaHoraActual.Day.ToString() + fechaHoraActual.Month.ToString() + fechaHoraActual.Hour.ToString() + fechaHoraActual.Minute.ToString() + fechaHoraActual.Second.ToString();
 
-correlativo = double.Parse(numeroCaja + fecha);
+correlativo = long.Parse(numeroCaja + fecha);
 
 
 Console.WriteLine("Ingrese el numero del producto, para finalizar ingrese 999");
