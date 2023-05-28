@@ -2583,11 +2583,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "/Users/dragoperic/Desktop/Taller1PIS/Taller1PIS.csproj",
+      "projectUniqueName": "/Users/dragoperic/POS/Taller1PIS.csproj",
       "projectName": "Taller1PIS",
-      "projectPath": "/Users/dragoperic/Desktop/Taller1PIS/Taller1PIS.csproj",
+      "projectPath": "/Users/dragoperic/POS/Taller1PIS.csproj",
       "packagesPath": "/Users/dragoperic/.nuget/packages/",
-      "outputPath": "/Users/dragoperic/Desktop/Taller1PIS/obj/",
+      "outputPath": "/Users/dragoperic/POS/obj/",
       "projectStyle": "PackageReference",
       "configFilePaths": [
         "/Users/dragoperic/.nuget/NuGet/NuGet.Config"

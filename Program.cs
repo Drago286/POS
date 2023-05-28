@@ -4,7 +4,7 @@ using System.IO;
 string codigoProducto;
 int codigoProducto2;
 string numeroCaja;
-double correlativo;
+long correlativo;
 string cantidadComprada;
 int cantidadComprada2;
 string rutCliente;
@@ -12,14 +12,20 @@ int idVenta;
 string fecha;
 string fecha2;
 string json;
+int IdSucursal;
 
 Venta ventaBuscada;
+VentaJson ventaJson; 
 Producto productoBuscado;
+ProductoJson productoJson;
 PosContext ctx = new PosContext();
 VentaProducto ventaProducto;
 Venta venta;
 
+List<VentaProductoJson> ventaProductoJsons;
 List<Venta> ventaDelDia = new List<Venta>();
+List<VentaJson> ventaDelDiaJson = new List<VentaJson>();
+
 List<VentaProducto> ventaProductosDia = new List<VentaProducto>();
 
 JsonSerializerSettings settings = new JsonSerializerSettings
@@ -47,11 +53,13 @@ rutCliente = Console.ReadLine();
 
 while (rutCliente != "888"){
 
+ventaProductoJsons = new List<VentaProductoJson>();
+
 fechaHoraActual = DateTime.Now;
 horaActual = fechaHoraActual.TimeOfDay;
 fecha = fechaHoraActual.Day.ToString() + fechaHoraActual.Month.ToString() + fechaHoraActual.Hour.ToString() + fechaHoraActual.Minute.ToString() + fechaHoraActual.Second.ToString();
 
-correlativo = double.Parse(numeroCaja + fecha);
+correlativo = long.Parse(numeroCaja + fecha);
 
 
 Console.WriteLine("Ingrese el numero del producto, para finalizar ingrese 999");
@@ -64,6 +72,7 @@ codigoProducto2 = int.Parse(codigoProducto);
 
 
 productoBuscado = ctx.Productos.Where(p => p.Codigo == codigoProducto2).FirstOrDefault();
+
 
 
 while (productoBuscado == null){
@@ -83,21 +92,18 @@ while (productoBuscado == null){
 }
     if(codigoProducto2 != 999){
         Console.WriteLine("Producto: " + productoBuscado.Nombre.ToUpper()+" , Precio: $"+productoBuscado.Precio);
+        productoJson = new ProductoJson(){Idproducto = productoBuscado.Idproducto, Nombre = productoBuscado.Nombre, Precio = productoBuscado.Precio, Codigo = productoBuscado.Codigo, Descripcion = productoBuscado.Descripcion};
+
 
     }   
 
 
-
 venta = new Venta(){Correlativo = correlativo, Fecha = fechaHoraActual.Date, Hora = fechaHoraActual.TimeOfDay, RutCliente = rutCliente};
-
 ctx.Ventas.Add(venta);
 ventaDelDia.Add(venta);
 
 
-
 ctx.SaveChanges();
-
-
 
 ventaBuscada = ctx.Ventas.OrderByDescending(e => e.Idventa).FirstOrDefault();
 
@@ -116,6 +122,8 @@ cantidadComprada2 = int.Parse(cantidadComprada);
 ventaProducto =  new VentaProducto(){Idproducto = productoBuscado.Idproducto ,Idventa = idVenta , Cantidad = cantidadComprada2 ,Precio = productoBuscado.Precio}; 
 ctx.VentaProductos.Add(ventaProducto);
 ventaProductosDia.Add(ventaProducto);
+ventaProductoJsons.Add(new VentaProductoJson(){Idproducto = productoBuscado.Idproducto ,Idventa = idVenta , Cantidad = cantidadComprada2 ,Precio = productoBuscado.Precio});
+
 
 
 Console.WriteLine("Ingrese el numero del producto, para finalizar ingrese 999");
@@ -154,6 +162,9 @@ while (productoBuscado == null){
     }   
 
 }
+ventaJson = new VentaJson(){Idventa = idVenta, Correlativo = correlativo, Fecha = fechaHoraActual.Date, Hora = fechaHoraActual.TimeOfDay, RutCliente = rutCliente};
+ventaJson.VentaProducto = ventaProductoJsons;
+ventaDelDiaJson.Add(ventaJson);
 
 ctx.SaveChanges();
 
@@ -178,8 +189,6 @@ Console.WriteLine("-------------------------------------------------------------
  Console.WriteLine("----------------------------------------------------------------");
 
 
-
-
 Console.WriteLine("Indique el RUT del cliente, 888 para terminar dia de ventas");
 rutCliente = Console.ReadLine();
 
@@ -198,6 +207,9 @@ if (!Directory.Exists(directorio))
 
 json = JsonConvert.SerializeObject(ventaDelDia.ToList(), Formatting.Indented, settings);
 File.WriteAllText(directorio+"/ventasDia_"+fecha2+".json", json);
+
+json = JsonConvert.SerializeObject(ventaDelDiaJson.ToList(), Formatting.Indented, settings);
+File.WriteAllText(directorio+"/ventasDia2_"+fecha2+".json", json);
 
 json = JsonConvert.SerializeObject(ctx.Ventas.ToList(), Formatting.Indented, settings);
 File.WriteAllText(directorio+"/ventasGeneral.json", json);

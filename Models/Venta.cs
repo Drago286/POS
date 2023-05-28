@@ -6,6 +6,8 @@ public partial class Venta
 {
     public int Idventa { get; set; }
 
+
+
     public double Correlativo { get; set; }
 
     public DateTime? Fecha { get; set; }

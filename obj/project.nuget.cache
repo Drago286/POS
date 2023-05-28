@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "1iH96YJ04PjmgMwfGEVpEfz+iHNaMfqlfHyVxySC4cRL6PFz8rI8OlLWfmaydZL/Eqn8vUAxq7oqoOiJsrHEJg==",
+  "dgSpecHash": "Q0ljFPkddd5c5Uh6ZmMWfD8jS8zeGTKF4Dz4o+G/6+2Rg6/tQIe54X5EzY74PDPfHWQaI2lG0SpQbiZqrnJrEQ==",
   "success": true,
-  "projectFilePath": "/Users/dragoperic/Desktop/Taller1PIS/Taller1PIS.csproj",
+  "projectFilePath": "/Users/dragoperic/POS/Taller1PIS.csproj",
   "expectedPackageFiles": [
     "/Users/dragoperic/.nuget/packages/google.protobuf/3.21.9/google.protobuf.3.21.9.nupkg.sha512",
     "/Users/dragoperic/.nuget/packages/humanizer.core/2.14.1/humanizer.core.2.14.1.nupkg.sha512",
