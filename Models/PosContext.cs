@@ -38,7 +38,7 @@ public partial class PosContext : DbContext
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder){
 
-        optionsBuilder.UseMySQL("server = localhost; database=POS; user = root; password = Drago2806");
+        optionsBuilder.UseMySQL("server = localhost; port = 3308; database=POS; user = root; password =root123");
     }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
