@@ -4,7 +4,7 @@ using System.IO;
 string codigoProducto;
 int codigoProducto2;
 string numeroCaja;
-double correlativo;
+long correlativo;
 string cantidadComprada;
 int cantidadComprada2;
 string rutCliente;
@@ -12,6 +12,8 @@ int idVenta;
 string fecha;
 string fecha2;
 string json;
+string sucursalActual = "Punto encuentro";
+
 
 Venta ventaBuscada;
 Producto productoBuscado;
@@ -22,16 +24,58 @@ Venta venta;
 List<Venta> ventaDelDia = new List<Venta>();
 List<VentaProducto> ventaProductosDia = new List<VentaProducto>();
 
+
 JsonSerializerSettings settings = new JsonSerializerSettings
 {
     ReferenceLoopHandling = ReferenceLoopHandling.Ignore
 };
 
+//OBTENER FECHA
 
 DateTime fechaHoraActual = DateTime.Now;
 TimeSpan horaActual = fechaHoraActual.TimeOfDay;
 fecha2 = fechaHoraActual.Day.ToString() + fechaHoraActual.Month.ToString() + fechaHoraActual.Year.ToString();
 
+//ACTUALIZACION DE PRODUCTOS
+
+string archivoIntentario = @"/Users/dragoperic/Desktop/archivosPOS/inventario/inventario.json";
+
+string inventario = File.ReadAllText(archivoIntentario);
+
+
+List<ProductoInvenario> productosActualizados = JsonConvert.DeserializeObject<List<ProductoInvenario>>(inventario);
+
+
+foreach (var productoActualizado in productosActualizados){
+    Console.WriteLine("Codigo desde inventerio.json: "+ productoActualizado.Codigo);
+
+
+        Producto productoExistente = ctx.Productos.FirstOrDefault(p => p.Codigo == productoActualizado.Codigo);
+        if ((productoExistente != null) && (sucursalActual == productoActualizado.NombreSucursal))
+        {
+            Console.WriteLine("Codigo encontrado: "+  productoExistente.Codigo);
+            Console.WriteLine("producto de la sucursal: "+ productoActualizado.NombreSucursal);
+            productoExistente.Codigo = productoActualizado.Codigo;
+            productoExistente.Nombre = productoActualizado.Nombre;
+            productoExistente.Descripcion = productoActualizado.Descripcion;
+            productoExistente.Precio = productoActualizado.Precio;
+            
+        }
+        if((productoExistente == null) && (sucursalActual == productoActualizado.NombreSucursal)){
+            Producto nuevoProducto = new Producto{
+            Codigo = productoActualizado.Codigo,
+            Nombre = productoActualizado.Nombre,
+            Descripcion = productoActualizado.Descripcion,
+            Precio = productoActualizado.Precio,
+            };
+                ctx.Productos.Add(nuevoProducto);
+                ctx.SaveChanges();
+        }
+        
+        
+}
+
+ctx.SaveChanges();
 
 
 Console.WriteLine("Buenos dias, ingrese el numero de caja: ");
@@ -51,7 +95,7 @@ fechaHoraActual = DateTime.Now;
 horaActual = fechaHoraActual.TimeOfDay;
 fecha = fechaHoraActual.Day.ToString() + fechaHoraActual.Month.ToString() + fechaHoraActual.Hour.ToString() + fechaHoraActual.Minute.ToString() + fechaHoraActual.Second.ToString();
 
-correlativo = double.Parse(numeroCaja + fecha);
+correlativo = long.Parse(numeroCaja + fecha);
 
 
 Console.WriteLine("Ingrese el numero del producto, para finalizar ingrese 999");
@@ -199,7 +243,7 @@ if (!Directory.Exists(directorio))
 json = JsonConvert.SerializeObject(ventaDelDia.ToList(), Formatting.Indented, settings);
 File.WriteAllText(directorio+"/ventasDia_"+fecha2+".json", json);
 
-json = JsonConvert.SerializeObject(ctx.Ventas.ToList(), Formatting.Indented, settings);
+json = JsonConvert.SerializeObject(ctx.Ventas.ToList(),Formatting.Indented, settings);
 File.WriteAllText(directorio+"/ventasGeneral.json", json);
 
 
@@ -211,11 +255,12 @@ if (!Directory.Exists(directorio))
 }
 
 
-json = JsonConvert.SerializeObject(ventaDelDia.ToList(), Formatting.Indented, settings);
+json = JsonConvert.SerializeObject(ventaDelDia.ToList(),Formatting.Indented, settings);
 File.WriteAllText(directorio+"/ventasProductoDia_"+fecha2+".json", json);
 
 
-json = JsonConvert.SerializeObject(ctx.VentaProductos.ToList(), Formatting.Indented, settings);
+json = JsonConvert.SerializeObject(ctx.VentaProductos.ToList(),Formatting.Indented, settings);
 File.WriteAllText(directorio+"/ventasProductoGeneral.json", json);
+
 
 
