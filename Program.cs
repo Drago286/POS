@@ -12,7 +12,8 @@ int idVenta;
 string fecha;
 string fecha2;
 string json;
-int IdSucursal;
+string IdSucursal = "";
+string sucursalActual = "Punto encuentro";
 
 Venta ventaBuscada;
 VentaJson ventaJson; 
@@ -38,6 +39,47 @@ DateTime fechaHoraActual = DateTime.Now;
 TimeSpan horaActual = fechaHoraActual.TimeOfDay;
 fecha2 = fechaHoraActual.Day.ToString() + fechaHoraActual.Month.ToString() + fechaHoraActual.Year.ToString();
 
+
+string archivoIntentario = @"/Users/dragoperic/Desktop/archivosPOS/inventario/inventario.json";
+
+string inventario = File.ReadAllText(archivoIntentario);
+
+
+List<ProductoInvenario> productosActualizados = JsonConvert.DeserializeObject<List<ProductoInvenario>>(inventario);
+
+//Actualizacion de inventario
+
+foreach (var productoActualizado in productosActualizados){
+    Console.WriteLine("Codigo desde inventerio.json: "+ productoActualizado.Codigo);
+
+
+        Producto productoExistente = ctx.Productos.FirstOrDefault(p => p.Codigo == productoActualizado.Codigo);
+        if ((productoExistente != null) && (sucursalActual == productoActualizado.NombreSucursal))
+        {
+            Console.WriteLine("Codigo encontrado: "+  productoExistente.Codigo);
+            Console.WriteLine("producto de la sucursal: "+ productoActualizado.NombreSucursal);
+            productoExistente.Codigo = productoActualizado.Codigo;
+            productoExistente.Nombre = productoActualizado.Nombre;
+            productoExistente.Descripcion = productoActualizado.Descripcion;
+            productoExistente.Precio = productoActualizado.Precio;
+            IdSucursal = productoActualizado.IdSucursal.ToString();
+            
+        }
+        if((productoExistente == null) && (sucursalActual == productoActualizado.NombreSucursal)){
+            Producto nuevoProducto = new Producto{
+            Codigo = productoActualizado.Codigo,
+            Nombre = productoActualizado.Nombre,
+            Descripcion = productoActualizado.Descripcion,
+            Precio = productoActualizado.Precio,
+            };
+                ctx.Productos.Add(nuevoProducto);
+                ctx.SaveChanges();
+        }
+        
+        
+}
+
+ctx.SaveChanges();
 
 
 Console.WriteLine("Buenos dias, ingrese el numero de caja: ");
@@ -162,7 +204,7 @@ while (productoBuscado == null){
     }   
 
 }
-ventaJson = new VentaJson(){Idventa = idVenta, Correlativo = correlativo, Fecha = fechaHoraActual.Date, Hora = fechaHoraActual.TimeOfDay, RutCliente = rutCliente};
+ventaJson = new VentaJson(){IdSucursal = IdSucursal ,Idventa = idVenta, Correlativo = correlativo, Fecha = fechaHoraActual.Date, Hora = fechaHoraActual.TimeOfDay, RutCliente = rutCliente};
 ventaJson.VentaProducto = ventaProductoJsons;
 ventaDelDiaJson.Add(ventaJson);
 
@@ -205,11 +247,9 @@ if (!Directory.Exists(directorio))
     Directory.CreateDirectory(directorio);
 }
 
-json = JsonConvert.SerializeObject(ventaDelDia.ToList(), Formatting.Indented, settings);
-File.WriteAllText(directorio+"/ventasDia_"+fecha2+".json", json);
 
 json = JsonConvert.SerializeObject(ventaDelDiaJson.ToList(), Formatting.Indented, settings);
-File.WriteAllText(directorio+"/ventasDia2_"+fecha2+".json", json);
+File.WriteAllText(directorio+"/ventasDia_"+fecha2+".json", json);
 
 json = JsonConvert.SerializeObject(ctx.Ventas.ToList(), Formatting.Indented, settings);
 File.WriteAllText(directorio+"/ventasGeneral.json", json);

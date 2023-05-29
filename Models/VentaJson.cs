@@ -6,7 +6,7 @@ public partial class VentaJson
 {
     public int Idventa { get; set; }
 
-        public int IdSucursal { get; set; }
+    public string IdSucursal { get; set; }
 
     public long Correlativo { get; set; }
 

@@ -7,7 +7,6 @@ public partial class VentaProductoJson
  
     public int? Idproducto { get; set; }
 
-    public int? IdSucursal { get; set; }
 
     public int? Idventa { get; set; }
 
