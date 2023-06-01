@@ -40,7 +40,7 @@ TimeSpan horaActual = fechaHoraActual.TimeOfDay;
 fecha2 = fechaHoraActual.Day.ToString() + fechaHoraActual.Month.ToString() + fechaHoraActual.Year.ToString();
 
 
-string archivoIntentario = @"/Users/dragoperic/Desktop/archivosPOS/inventario/inventario.json";
+string archivoIntentario = @"/Users/dragoperic/Desktop/archivosPOS/inventario/"+sucursalActual+".json";
 string inventario = File.ReadAllText(archivoIntentario);
 
 List<ProductoInvenario> productosActualizados = JsonConvert.DeserializeObject<List<ProductoInvenario>>(inventario);
@@ -52,7 +52,7 @@ foreach (var productoActualizado in productosActualizados)
 
 
     Producto productoExistente = ctx.Productos.FirstOrDefault(p => p.Codigo == productoActualizado.Codigo);
-    if ((productoExistente != null) && (sucursalActual == productoActualizado.NombreSucursal))
+    if ((productoExistente != null)) //&& (sucursalActual == productoActualizado.NombreSucursal))
     {
         Console.WriteLine("Codigo encontrado: " + productoExistente.Codigo);
         Console.WriteLine("producto de la sucursal: " + productoActualizado.NombreSucursal);
@@ -63,7 +63,7 @@ foreach (var productoActualizado in productosActualizados)
         IdSucursal = productoActualizado.IdSucursal.ToString();
 
     }
-    if ((productoExistente == null) && (sucursalActual == productoActualizado.NombreSucursal))
+    if ((productoExistente == null))// && (sucursalActual == productoActualizado.NombreSucursal))
     {
         Producto nuevoProducto = new Producto
         {
